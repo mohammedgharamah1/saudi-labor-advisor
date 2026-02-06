@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستشارك العمالي - نظام العمل السعودي</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">⚖️</div>
+            <h1>مستشارك العمالي</h1>
+            <p class="subtitle">اسأل عن حقوقك في نظام العمل السعودي بكلامك العادي</p>
+        </header>
+
+        <main>
+            <!-- Examples -->
+            <div class="examples" id="examples">
+                <h3>جرب تسأل مثل:</h3>
+                <div class="examples-grid">
+                    <button class="example-btn" onclick="useExample(this)">صاحب العمل خصم من راتبي بدون إنذار</button>
+                    <button class="example-btn" onclick="useExample(this)">كم يوم إجازة أستحق في السنة؟</button>
+                    <button class="example-btn" onclick="useExample(this)">طردوني من الشغل بدون سبب</button>
+                    <button class="example-btn" onclick="useExample(this)">ما دفعوا لي راتب شهرين</button>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-section">
+                <textarea id="question" placeholder="اكتب مشكلتك هنا بكلامك العادي..." rows="3"></textarea>
+                <button id="submit-btn" onclick="submitQuestion()">
+                    <span id="btn-text">استشر الآن</span>
+                    <span id="btn-loading" class="hidden">جاري البحث في النظام...</span>
+                </button>
+            </div>
+
+            <!-- Answer -->
+            <div id="answer-section" class="answer-section hidden">
+                <h3>الإجابة:</h3>
+                <div id="answer-content"></div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-section" class="error-section hidden">
+                <p id="error-content"></p>
+            </div>
+        </main>
+
+        <footer>
+            <p>هذا الموقع للتوعية فقط وليس بديلاً عن الاستشارة القانونية</p>
+            <p class="footer-link">نظام العمل السعودي | وزارة الموارد البشرية والتنمية الاجتماعية</p>
+        </footer>
+    </div>
+
+    <script>
+        function useExample(btn) {
+            document.getElementById('question').value = btn.textContent;
+            document.getElementById('question').focus();
+        }
+
+        async function submitQuestion() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const submitBtn = document.getElementById('submit-btn');
+            const answerSection = document.getElementById('answer-section');
+            const answerContent = document.getElementById('answer-content');
+            const errorSection = document.getElementById('error-section');
+            const examples = document.getElementById('examples');
+
+            // Show loading
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
+            answerSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+
+            try {
+                const response = await fetch('/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('error-content').textContent = data.error;
+                    errorSection.classList.remove('hidden');
+                } else {
+                    // Convert markdown-like formatting to HTML
+                    let formatted = data.answer
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n\n/g, '</p><p>')
+                        .replace(/\n/g, '<br>')
+                        .replace(/^/, '<p>')
+                        .replace(/$/, '</p>');
+                    answerContent.innerHTML = formatted;
+                    answerSection.classList.remove('hidden');
+                    examples.classList.add('hidden');
+                }
+            } catch (err) {
+                document.getElementById('error-content').textContent = 'حدث خطأ في الاتصال. حاول مرة أخرى.';
+                errorSection.classList.remove('hidden');
+            }
+
+            // Reset button
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
+        }
+
+        // Submit on Enter (but allow Shift+Enter for new line)
+        document.getElementById('question').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submitQuestion();
+            }
+        });
+    </script>
+</body>
+</html>
