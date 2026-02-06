@@ -1,5 +1,5 @@
 // Load API key from config.js (not uploaded to GitHub for security)
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // Demo responses for when API quota is exceeded
 const DEMO_RESPONSES = [
@@ -230,6 +230,21 @@ ${LABOR_LAW_ARTICLES}
 سؤال مسؤول الموارد البشرية:
 `;
 
+function formatAnswer(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/### (.*?)(\n|$)/g, "<h4>$1</h4>")
+        .replace(/## (.*?)(\n|$)/g, "<h3>$1</h3>")
+        .replace(/\* (.*?)(\n|$)/g, "<li>$1</li>")
+        .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
+        .replace(/(<li>.*?<\/li>)+/gs, "<ul>$&</ul>")
+        .replace(/<\/ul>\s*<ul>/g, "")
+        .replace(/\n\n/g, "</p><p>")
+        .replace(/\n/g, "<br>")
+        .replace(/^/, "<p>")
+        .replace(/$/, "</p>");
+}
+
 function useExample(btn) {
     const text = btn.querySelector("span:last-child").textContent;
     document.getElementById("question").value = text;
@@ -301,15 +316,19 @@ async function submitQuestion() {
     const processingInterval = animateProcessing();
 
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(GROQ_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${GROQ_API_KEY}`,
+            },
             body: JSON.stringify({
-                contents: [
-                    {
-                        parts: [{ text: SYSTEM_PROMPT + question }],
-                    },
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: question },
                 ],
+                max_tokens: 1024,
             }),
         });
 
@@ -322,48 +341,17 @@ async function submitQuestion() {
             step.classList.add("done");
         });
 
-        // Short delay to show completion
-        await new Promise(function (resolve) {
-            setTimeout(resolve, 500);
-        });
-
+        await new Promise(function (resolve) { setTimeout(resolve, 500); });
         document.getElementById("processing-info").classList.add("hidden");
 
         if (data.error) {
             // Fallback to demo response
-            const demoAnswer = getDemoResponse(question);
-            let formatted = demoAnswer
-                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                .replace(/### (.*?)(\n|$)/g, "<h4>$1</h4>")
-                .replace(/## (.*?)(\n|$)/g, "<h3>$1</h3>")
-                .replace(/\* (.*?)(\n|$)/g, "<li>$1</li>")
-                .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
-                .replace(/(<li>.*?<\/li>)+/gs, "<ul>$&</ul>")
-                .replace(/<\/ul>\s*<ul>/g, "")
-                .replace(/\n\n/g, "</p><p>")
-                .replace(/\n/g, "<br>")
-                .replace(/^/, "<p>")
-                .replace(/$/, "</p>");
-            answerContent.innerHTML = formatted;
+            const fallback = getDemoResponse(question);
+            answerContent.innerHTML = formatAnswer(fallback);
             answerSection.classList.remove("hidden");
         } else {
-            const answer = data.candidates[0].content.parts[0].text;
-
-            // Convert markdown to HTML
-            let formatted = answer
-                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                .replace(/### (.*?)(\n|$)/g, "<h4>$1</h4>")
-                .replace(/## (.*?)(\n|$)/g, "<h3>$1</h3>")
-                .replace(/\* (.*?)(\n|$)/g, "<li>$1</li>")
-                .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
-                .replace(/(<li>.*?<\/li>)+/gs, "<ul>$&</ul>")
-                .replace(/<\/ul>\s*<ul>/g, "")
-                .replace(/\n\n/g, "</p><p>")
-                .replace(/\n/g, "<br>")
-                .replace(/^/, "<p>")
-                .replace(/$/, "</p>");
-
-            answerContent.innerHTML = formatted;
+            const answer = data.choices[0].message.content;
+            answerContent.innerHTML = formatAnswer(answer);
             answerSection.classList.remove("hidden");
         }
     } catch (err) {
@@ -376,20 +364,8 @@ async function submitQuestion() {
         document.getElementById("processing-info").classList.add("hidden");
 
         // Fallback to demo response
-        const demoAnswer = getDemoResponse(question);
-        let formatted = demoAnswer
-            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-            .replace(/### (.*?)(\n|$)/g, "<h4>$1</h4>")
-            .replace(/## (.*?)(\n|$)/g, "<h3>$1</h3>")
-            .replace(/\* (.*?)(\n|$)/g, "<li>$1</li>")
-            .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
-            .replace(/(<li>.*?<\/li>)+/gs, "<ul>$&</ul>")
-            .replace(/<\/ul>\s*<ul>/g, "")
-            .replace(/\n\n/g, "</p><p>")
-            .replace(/\n/g, "<br>")
-            .replace(/^/, "<p>")
-            .replace(/$/, "</p>");
-        answerContent.innerHTML = formatted;
+        const fallback = getDemoResponse(question);
+        answerContent.innerHTML = formatAnswer(fallback);
         answerSection.classList.remove("hidden");
     }
 
