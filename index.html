@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد الموارد البشرية - نظام العمل السعودي</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect width="48" height="48" rx="12" fill="#1a365d"/>
+                    <path d="M24 12C17.4 12 12 17.4 12 24s5.4 12 12 12 12-5.4 12-12S30.6 12 24 12zm-2 17l-5-5 1.4-1.4L22 26.2l7.6-7.6L31 20l-9 9z" fill="white"/>
+                </svg>
+            </div>
+            <h1>مساعد الموارد البشرية</h1>
+            <p class="subtitle">أداة ذكية تساعد فرق HR على الالتزام بنظام العمل السعودي</p>
+        </header>
+
+        <!-- How it works -->
+        <div class="how-it-works">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    <strong>اكتب سؤالك بكلامك العادي</strong>
+                    <span>لا تحتاج صياغة قانونية</span>
+                </div>
+            </div>
+            <div class="step-arrow">&#8592;</div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    <strong>الذكاء الاصطناعي يحلل سؤالك</strong>
+                    <span>يربطه تلقائياً بنظام العمل السعودي</span>
+                </div>
+            </div>
+            <div class="step-arrow">&#8592;</div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    <strong>تحصل على إجابة واضحة</strong>
+                    <span>مع رقم المادة النظامية</span>
+                </div>
+            </div>
+        </div>
+
+        <main>
+            <!-- Examples -->
+            <div class="examples" id="examples">
+                <h3>أسئلة شائعة في الموارد البشرية:</h3>
+                <div class="examples-grid">
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>موظف غاب 10 أيام بدون إذن، وش الإجراء النظامي؟</span>
+                    </button>
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>كيف نحسب مكافأة نهاية الخدمة؟</span>
+                    </button>
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>هل نقدر نمدد فترة التجربة للموظف؟</span>
+                    </button>
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>موظف رفض النقل لفرع ثاني، وش حقوقنا؟</span>
+                    </button>
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>كم الحد الأقصى لساعات العمل الإضافي؟</span>
+                    </button>
+                    <button class="example-btn" onclick="useExample(this)">
+
+                        <span>كيف نفصل موظف بشكل نظامي؟</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-section">
+                <div class="input-label">اكتب سؤالك بكلامك العادي - الباقي علينا:</div>
+                <textarea id="question" placeholder="مثال: عندنا موظف يرفض يوقع العقد الجديد..." rows="3"></textarea>
+                <button id="submit-btn" onclick="submitQuestion()">
+                    <span id="btn-text">احصل على الإجابة</span>
+                    <span id="btn-loading" class="hidden">
+                        <span class="spinner"></span>
+                        جاري تحليل سؤالك ومطابقته مع نظام العمل...
+                    </span>
+                </button>
+            </div>
+
+            <!-- AI Processing Info -->
+            <div id="processing-info" class="processing-info hidden">
+                <div class="processing-steps">
+                    <div class="p-step active" id="p-step-1">
+                        <span class="p-check">&#10003;</span> استلام السؤال
+                    </div>
+                    <div class="p-step" id="p-step-2">
+                        <span class="p-check">&#10003;</span> تحليل السؤال وتصنيفه
+                    </div>
+                    <div class="p-step" id="p-step-3">
+                        <span class="p-check">&#10003;</span> البحث في مواد نظام العمل
+                    </div>
+                    <div class="p-step" id="p-step-4">
+                        <span class="p-check">&#10003;</span> صياغة الإجابة
+                    </div>
+                </div>
+            </div>
+
+            <!-- Answer -->
+            <div id="answer-section" class="answer-section hidden">
+                <div class="answer-header">
+                    <div class="answer-badge">
+                        <span class="badge-icon">&#10003;</span>
+                        إجابة مبنية على نظام العمل السعودي
+                    </div>
+                    <button class="new-question-btn" onclick="newQuestion()">سؤال جديد</button>
+                </div>
+                <div id="answer-content"></div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-section" class="error-section hidden">
+                <p id="error-content"></p>
+            </div>
+        </main>
+
+        <footer>
+            <div class="sources-section">
+                <h4>المصادر والمراجع</h4>
+                <p>تستند هذه الأداة على:</p>
+                <ul>
+                    <li>نظام العمل السعودي الصادر بالمرسوم الملكي رقم م/51 وتعديلاته</li>
+                    <li>المواد المعتمدة من وزارة الموارد البشرية والتنمية الاجتماعية</li>
+                    <li>يشمل: أحكام عقود العمل، الأجور، ساعات العمل، الإجازات، إنهاء العقد، مكافأة نهاية الخدمة، وتشغيل النساء</li>
+                </ul>
+            </div>
+            <p class="disclaimer">هذه الأداة للتوعية والمساعدة فقط وليست بديلاً عن الاستشارة القانونية الرسمية</p>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="labor-law.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
