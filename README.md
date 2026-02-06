@@ -1,52 +1,25 @@
 # Saudi Labor Law HR Assistant
 
-A web application that helps HR professionals understand and comply with Saudi Labor Law. Users describe their workplace situation in plain Arabic, and the system automatically analyzes the query, matches it against actual labor law articles, and provides a clear answer citing the relevant legal article numbers.
+Built this tool to help HR teams deal with Saudi Labor Law questions without needing to dig through legal documents every time. The idea is simple: you type your question in plain Arabic, and the app finds the relevant law article and gives you a clear answer with the article number.
 
-## Features
+I used a RAG (Retrieval-Augmented Generation) approach here, meaning the AI doesn't just guess — it actually references the real labor law text I embedded in the app. This keeps the answers accurate and grounded in actual legal articles.
 
-- **Plain language input**: No legal knowledge required - ask in your own words
-- **AI-powered analysis**: Automatically matches questions to relevant labor law articles
-- **RAG approach**: Uses actual Saudi Labor Law text to minimize AI hallucination
-- **Article citations**: Every answer includes the relevant article number
-- **Arabic RTL interface**: Designed for Arabic-speaking HR professionals
+## Tech
 
-## Tech Stack
+HTML, CSS, JavaScript on the frontend. Groq API with Llama 3.3 70B handles the AI part. The labor law articles are stored locally in `labor-law.js` and fed into the prompt so the model always has the legal context it needs.
 
-- **Frontend**: HTML, CSS, JavaScript
-- **AI**: Google Gemini API
-- **Approach**: Retrieval-Augmented Generation (RAG) with Prompt Engineering
+## How to run it
 
-## How It Works
+Clone the repo and create a `config.js` file in the root:
 
-1. User types a question in plain Arabic
-2. The system combines the question with a pre-built prompt and the actual labor law articles
-3. The AI analyzes the question against the real law text
-4. A clear answer is returned with the relevant article number
-
-## Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/mohammedgharamah1/saudi-labor-advisor.git
-cd saudi-labor-advisor
-```
-
-2. Create a `config.js` file with your Gemini API key:
 ```javascript
-const GEMINI_API_KEY = "your-api-key-here";
+const GROQ_API_KEY = "your-groq-api-key";
 ```
 
-3. Get a free API key from [Google AI Studio](https://aistudio.google.com/apikey)
+You can get a free key from [Groq Console](https://console.groq.com). Then just open `index.html` in your browser.
 
-4. Open `index.html` in your browser
+There's also a live version here: https://mohammedgharamah1.github.io/saudi-labor-advisor
 
-## Legal Reference
+## What it covers
 
-This tool references the Saudi Labor Law (Royal Decree No. M/51) and its amendments, covering:
-- Employment contracts and probation periods
-- Wages and deductions
-- Working hours and overtime
-- Annual, sick, and personal leave
-- Contract termination procedures
-- End-of-service benefits
-- Women's employment rights
+The app references the Saudi Labor Law (Royal Decree No. M/51) and its amendments, including employment contracts, probation periods, wages, working hours, overtime, leave policies, termination procedures, end-of-service benefits, and women's employment rights.
