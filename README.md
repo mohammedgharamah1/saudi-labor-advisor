@@ -4,6 +4,17 @@ Built this tool to help HR teams deal with Saudi Labor Law questions without nee
 
 I used a RAG (Retrieval-Augmented Generation) approach here, meaning the AI doesn't just guess — it actually references the real labor law text I embedded in the app. This keeps the answers accurate and grounded in actual legal articles.
 
+## Screenshots
+
+### Main Interface
+![Main Page](screenshots/1-main.png)
+
+### Ask a Question
+![Question](screenshots/3-question.png)
+
+### AI Response with Law Articles
+![Response](screenshots/4-response.png)
+
 ## Tech
 
 HTML, CSS, JavaScript on the frontend. Groq API with Llama 3.3 70B handles the AI part. The labor law articles are stored locally in `labor-law.js` and fed into the prompt so the model always has the legal context it needs.
